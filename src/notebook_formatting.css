@@ -1,0 +1,43 @@
+/* notebook_formatting.css */
+
+h1 {
+    font-size: 72px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+}
+
+h2 {
+    font-size: 60px;
+    font-weight: bold;
+    color: white;
+    text-align: left;
+}
+
+h3 {
+    font-size: 48px;
+    font-weight: normal;
+    color: white;
+    text-align: left;
+}
+
+h4 {
+    font-size: 36px;
+    font-weight: normal;
+    color: white;
+    text-align: left;
+}
+
+h5 {
+    font-size: 24px;
+    font-weight: normal;
+    color: white;
+    text-align: left;
+}
+
+h6 {
+    font-size: 16px;
+    font-weight: normal;
+    color: white;
+    text-align: left;
+}
