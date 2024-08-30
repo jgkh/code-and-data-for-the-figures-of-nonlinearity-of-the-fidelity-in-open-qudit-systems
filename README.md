@@ -3,6 +3,9 @@
 ## Description
 This project provides the source code and data used for simulating, analysing and generating the results presented in the paper "Nonlinearity of the Fidelity in Open Qudit Systems: Gate and Noise Dependence in High-dimensional Quantum Computing" (https://arxiv.org/abs/2406.15141).
 
+DOI for v1.0.0 of this project is hosted on Zenodo:
+[![DOI](https://zenodo.org/badge/849794907.svg)](https://zenodo.org/doi/10.5281/zenodo.13618284)
+
 ## Installation
 
 ### 1. Clone the Repository
