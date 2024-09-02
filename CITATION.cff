@@ -1,0 +1,29 @@
+# This CITATION.cff file was generated with Zotero.
+
+cff-version: 1.2.0
+message: >-
+  If you use this software, please cite it using the metadata from this file.
+title:  >-
+  Code and Data for "Nonlinearity of the Fidelity in Open Qudit Systems: Gate and Noise Dependence in High-dimensional Quantum Computing"
+abstract: This project provides the source code and data used for simulating, analysing and generating the results presented in the article "Nonlinearity of the Fidelity in Open Qudit Systems: Gate and Noise Dependence in High-dimensional Quantum Computing" (https://arxiv.org/abs/2406.15141).
+type: software
+license: Creative Commons Attribution 4.0 International
+version: 1.0.0
+url: https://zenodo.org/doi/10.5281/zenodo.13461895
+keywords: 
+  - Open quantum systems
+  - Quantum computers
+  - Quantum physics
+  - Qudits
+authors: 
+  - family-names: Hartmann
+    given-names: Jean-Gabriel
+  - family-names: Jankovic
+    given-names: Denis
+  - family-names: Pasquier
+    given-names: Remi
+  - family-names: Ruben
+    given-names: Mario
+  - family-names: Hervieux
+    given-names: Paul-Antoine
+date-released: 2024-08-30
