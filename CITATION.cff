@@ -1,29 +1,49 @@
-# This CITATION.cff file was generated with Zotero.
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
 
 cff-version: 1.2.0
+title: >-
+  Code and Data for "Nonlinearity of the Fidelity in Open
+  Qudit Systems: Gate and Noise Dependence in
+  High-dimensional Quantum Computing"
 message: >-
-  If you use this software, please cite it using the metadata from this file.
-title:  >-
-  Code and Data for "Nonlinearity of the Fidelity in Open Qudit Systems: Gate and Noise Dependence in High-dimensional Quantum Computing"
-abstract: This project provides the source code and data used for simulating, analysing and generating the results presented in the article "Nonlinearity of the Fidelity in Open Qudit Systems: Gate and Noise Dependence in High-dimensional Quantum Computing" (https://arxiv.org/abs/2406.15141).
+  If you use this software, please cite it using the
+  metadata from this file.
 type: software
-license: Creative Commons Attribution 4.0 International
-version: 1.0.0
-url: https://zenodo.org/doi/10.5281/zenodo.13461895
-keywords: 
-  - Open quantum systems
+authors:
+  - given-names: Jean-Gabriel
+    family-names: Hartmann
+    orcid: 'https://orcid.org/0000-0002-1992-9675'
+  - given-names: Denis
+    family-names: Jankovic
+    orcid: 'https://orcid.org/0000-0002-9550-6412'
+  - given-names: Remi
+    family-names: Pasquier
+    orcid: 'https://orcid.org/0000-0003-0058-4125'
+  - given-names: Mario
+    family-names: Ruben
+    orcid: 'https://orcid.org/0000-0002-7718-7016'
+  - given-names: Paul-Antoine
+    family-names: Hervieux
+    orcid: 'https://orcid.org/0000-0002-4965-9709'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.13461896
+  - type: other
+    value: 'https://arxiv.org/abs/2406.15141'
+repository-code: >-
+  https://github.com/jgkh/code-and-data-for-the-figures-of-nonlinearity-of-the-fidelity-in-open-qudit-systems.git
+abstract: >-
+  This project provides the source code and data used for
+  simulating, analysing and generating the results presented
+  in the article "Nonlinearity of the Fidelity in Open Qudit
+  Systems: Gate and Noise Dependence in High-dimensional
+  Quantum Computing" (https://arxiv.org/abs/2406.15141).
+keywords:
   - Quantum computers
   - Quantum physics
+  - Open quantum systems
   - Qudits
-authors: 
-  - family-names: Hartmann
-    given-names: Jean-Gabriel
-  - family-names: Jankovic
-    given-names: Denis
-  - family-names: Pasquier
-    given-names: Remi
-  - family-names: Ruben
-    given-names: Mario
-  - family-names: Hervieux
-    given-names: Paul-Antoine
-date-released: 2024-08-30
+license: CC-BY-4.0
+version: v1.0.0
+date-released: '2024-08-30'
