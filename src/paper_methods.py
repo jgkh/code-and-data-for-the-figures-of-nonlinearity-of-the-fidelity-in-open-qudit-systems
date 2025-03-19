@@ -953,6 +953,159 @@ def SHIFT_gate(d : int) -> qt.Qobj :
     
     return U
 # ----------------------------------------------------------------------------------------------------------------------------------
+def SHIFT_rotated(d : int) -> qt.Qobj :
+    """
+    Returns the rotated SHIFT gate for a d-dimensional system.
+
+    Parameters:
+    -----------
+    d : int
+        Dimension of the system.
+    
+    Returns:
+    --------
+    U : qt.Qobj
+        SHIFT gate for a d-dimensional system.
+
+    Raises:
+    -------
+    ValueError
+        If d is not an integer, or
+        If d is less than 2.
+    """
+
+    # Check if d is an integer and is greater than 1.
+    if not isinstance(d, int):
+        raise ValueError("Parameter d must be an integer.")
+    if d < 2:
+        raise ValueError("Parameter d must be greater than 1.")
+
+    # Initialise the SHIFT matrix
+    U : qt.Qobj = qt.Qobj(np.zeros((d, d), dtype = np.complex128))
+    
+    # Define the Indentity matrix
+    identity : np.ndarray = np.eye(d, dtype = np.complex128)
+
+    # Define the INC gate matrix
+    u : np.ndarray = np.roll(identity, shift = -1, axis = 0)
+
+    # Define the change-of-basis operators
+    q = Qudit(d = d)
+
+    j = q.get_j
+
+    jx, jy, jz = j("x"), j("y"), j("z")
+
+    u_z = sp.linalg.expm(-1j * np.pi / 2 * jy.full()) @ u @ sp.linalg.expm(1j * np.pi / 2 * jy.full())
+    
+    # Convert the matrix to a Qobj
+    U = qt.Qobj(u_z)
+    
+    return U
+# ----------------------------------------------------------------------------------------------------------------------------------
+def interpolated_SHIFT_rotated(d : int, eta : float = 1.0, shift : int = -1, imag : bool = False) -> qt.Qobj :
+    """
+    Generate a unitary matrix that interpolates between the identity
+    and the rotated-INC/ SHIFT gate based on the parameter eta.
+
+    Parameters:
+    -----------
+    d : int
+        Dimension of the system.
+
+    eta : float
+        Interpolation parameter in the range [0, 1].
+        Default value is 1.0.
+    
+    shift : int
+        Shift parameter for the INC/ SHIFT gate.
+        Default value is -1.
+
+    imag : bool
+        If True, the INC/ SHIFT gate is imaginary.
+        Default value is False.
+
+    Returns:
+    --------
+    U : qt.Qobj
+        Interpolated SHIFT gate.
+
+    Raises:
+    -------
+    ValueError
+        If d is not an integer, or
+        If d is less than 2, or
+        If eta is not a float, or
+        If eta is not in the range [0, 1].
+        If shift is not an integer, or
+        If shift is not equal to +1 or -1, or
+        If imag is not a bool.
+    """
+
+    # Check if d is an integer
+    if not isinstance(d, int):
+        raise ValueError("Parameter d must be an integer.")
+    # Check if d is greater than 1
+    if d < 2:
+        raise ValueError("Parameter d must be greater than 1.")
+    # Check if eta is a float
+    if not isinstance(eta, float):
+        raise ValueError("Parameter eta must be a float.")
+    # Check if eta is in the range [0, 1]
+    if eta < 0 or eta > 1:
+        raise ValueError("Parameter eta must be in the range [0, 1].")
+    # Check if shift is an integer
+    if not isinstance(shift, int):
+        raise ValueError("Parameter shift must be an integer.")
+    # Check if shift is equal to +1 or -1
+    if shift != +1 and shift != -1:
+        raise ValueError("Parameter shift must be equal to +1 or -1.")
+    # Check if imag is a bool
+    if not isinstance(imag, bool):
+        raise ValueError("Parameter imag must be a bool.")
+    
+    # Initialise the unitary matrix
+    U : qt.Qobj = qt.Qobj(np.zeros((d, d), dtype = np.complex128))
+
+    # Define the identity matrix
+    identity : np.ndarray = np.eye(d, dtype = np.complex128)
+
+    if imag:
+
+        identity = 1.0j * identity
+
+        if shift == +1:
+
+            identity[d-1][d-1] = -1.0j
+        else:
+            identity[0][0] = -1.0j
+
+    # Define the INC gate matrix
+    X_d : np.ndarray = np.roll(identity, shift = shift, axis = 0)
+
+    # Find the Hermitian generator of X_d (logarithm of the unitary matrix)
+    H_X_d : np.ndarray = 1.0j * sp.linalg.logm(X_d) # type: ignore
+
+    # Interpolate between the zero matrix and H_X_d
+    H_interpolated : np.ndarray = eta * H_X_d  # because the zero matrix contributes nothing
+
+    # Construct the unitary by exponentiating the interpolated Hermitian
+    u : np.ndarray = sp.linalg.expm(-1.0j * H_interpolated)
+
+    # Define the change-of-basis operators
+    q = Qudit(d = d)
+
+    j = q.get_j
+
+    jy = j("y")
+
+    u_z = sp.linalg.expm(-1j * np.pi / 2 * jy.full()) @ u @ sp.linalg.expm(1j * np.pi / 2 * jy.full())
+    
+    # Convert the matrix to a Qobj
+    U = qt.Qobj(u_z)
+    
+    return U
+# ----------------------------------------------------------------------------------------------------------------------------------
 def CLOCK_gate(d : int) -> qt.Qobj :
     """
     Returns the CLOCK gate for a d-dimensional system.
@@ -992,6 +1145,54 @@ def CLOCK_gate(d : int) -> qt.Qobj :
     # Convert the matrix to a Qobj
     U = qt.Qobj(u)
     
+    return U
+# ----------------------------------------------------------------------------------------------------------------------------------
+def haar_rotated(d : int) -> np.ndarray:
+    """
+    Generate a Haar-random unitary matrix of dimension d x d with a rotation of J_y.
+
+    Parameters:
+    -----------
+    d : int
+        The dimension of the unitary matrix.
+
+    Returns:
+    --------
+    U : np.ndarray
+        The Haar-random unitary matrix of dimension d x d with a rotation of J_y.
+
+    Raises:
+    -------
+    TypeError
+        If the input parameter is not an integer.
+    ValueError
+        If d is less than 2.
+
+    See Also:
+    ---------
+    qutip.rand_unitary_haar    
+    """
+
+    # Check if d is an integer
+    if not isinstance(d, int):
+        raise TypeError("Parameter d must be an integer.")
+    # Check if d is greater than 1
+    if d < 2:
+        raise ValueError("Parameter d must be greater than 1.")
+    
+    # Initialise return variables
+    U : np.ndarray = qt.Qobj(np.zeros((d, d), dtype = complex))
+
+    # Initialise local variables
+    haar = qt.rand_unitary_haar(d)
+    q = Qudit(d = d)
+    j = q.get_j
+    jy = j("y")
+
+    u = sp.linalg.expm(-1j * np.pi / 2 * jy.full()) @ haar.full() @ sp.linalg.expm(1j * np.pi / 2 * jy.full())
+
+    U = qt.Qobj(u)
+
     return U
 # ----------------------------------------------------------------------------------------------------------------------------------
 def interpolated_INC(d : int, eta : float = 1.0, shift : int = -1, imag : bool = False) -> qt.Qobj :
@@ -1148,7 +1349,69 @@ def interpolated_CLK(d : int, eta : float = 1.0) -> qt.Qobj :
     # Convert the matrix to a Qobj
     U = qt.Qobj(u)
 
-    return U   
+    return U  
+# ----------------------------------------------------------------------------------------------------------------------------------
+def interpolated_PHASE(d : int, eta : float = 1.0, phi : float = np.pi) -> qt.Qobj :
+    """
+    Generate a unitary matrix that interpolates between the identity and the CLOCK gate based on the parameter eta.
+
+    Parameters:
+    -----------
+    d : int
+        The dimension of the qudit system.
+
+    eta : float
+        The interpolation parameter in the range [0, 1].
+
+    Returns:
+    --------
+    U : qt.Qobj
+        Interpolated CLOCK gate.
+
+    Raises:
+    -------
+    ValueError
+        If d is not an integer, or
+        If d is less than 2, or
+        If eta is not a float, or
+        If eta is not in the range [0, 1].
+    """
+
+    # Check if d is an integer
+    if not isinstance(d, int):
+        raise ValueError("Parameter d must be an integer.")
+    # Check if d is greater than 1
+    if d < 2:
+        raise ValueError("Parameter d must be greater than 1.")
+    # Check if eta is a float
+    if not isinstance(eta, float):
+        raise ValueError("Parameter eta must be a float.")
+    # Check if eta is in the range [0, 1]
+    if eta < 0 or eta > 1:
+        raise ValueError("Parameter eta must be in the range [0, 1].")
+    
+    # Initialise the unitary matrix
+    U : qt.Qobj = qt.Qobj(np.zeros((d, d), dtype = np.complex128))
+
+    # Define an array of the dth roots of unity
+    diag : np.ndarray = np.array([np.exp(1.0j * phi * i) for i in range(d)])
+
+    # Define the diagonal matrix with the dth roots of unity on the diagonal
+    Z_d : np.ndarray = np.diag(diag)
+
+    # Find the Hermitian generator of Z_d (logarithm of the unitary matrix)
+    H_Z_d : np.ndarray = 1.0j * sp.linalg.logm(Z_d) # type: ignore
+
+    # Interpolate between the zero matrix and H_Z_d
+    H_interpolated : np.ndarray = eta * H_Z_d  # because the zero matrix contributes nothing
+
+    # Construct the unitary by exponentiating the interpolated Hermitian
+    u : np.ndarray = sp.linalg.expm(-1.0j * H_interpolated)
+
+    # Convert the matrix to a Qobj
+    U = qt.Qobj(u)
+
+    return U    
 # ----------------------------------------------------------------------------------------------------------------------------------
 def generalised_SWAP(d : int, swap_state_1 : int, swap_state_2 : int) -> np.ndarray:
     """
@@ -2170,8 +2433,12 @@ def generate_gates_and_hamiltonians(n_gates : int, dim : int, method: str, n_job
         'QFT' : (QFT_gate, {}),
         'SHIFT' : (SHIFT_gate, {}),
         'CLOCK' : (CLOCK_gate, {}),
+        'SHIFT_rotated' : (SHIFT_rotated, {}),
+        'haar_rotated' : (haar_rotated, {}),
+        'interpolated_SHIFT_rotated' : (interpolated_SHIFT_rotated, {}),
         "interpolated_INC": (interpolated_INC, {}),
         "interpolated_CLK": (interpolated_CLK, {}),
+        "interpolated_PHASE": (interpolated_PHASE, {}),
         "fixed" : (fixed_gates, {}),
         "haar_measure" : (haar_random_gate, {})        
     }
@@ -2191,6 +2458,10 @@ def generate_gates_and_hamiltonians(n_gates : int, dim : int, method: str, n_job
     elif method in ['interpolated_INC']:
         tasks = (general_args + [eta] for eta in etas)
     elif method in ['interpolated_CLK']:
+        tasks = (general_args + [eta] for eta in etas)
+    elif method in ['interpolated_PHASE']:
+        tasks = (general_args + [eta] for eta in etas)
+    elif method in ['interpolated_SHIFT_rotated']:
         tasks = (general_args + [eta] for eta in etas)
     elif method in ['generalised_SWAP']:
         # Generate all possible pairs of states for swapping
